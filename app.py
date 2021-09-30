@@ -17,28 +17,15 @@ r=requests.options('http://127.0.0.1:8000/voyage/')
 md=json.loads(r.text)
 #print(md)
 
+#print(df)
 
-r=requests.get('http://127.0.0.1:8000/voyage/table?&voyage_dates__imp_arrival_at_port_of_dis_year=1827,1829')
+yr_range=range(1800,1850)
+markerstep=5
 
-df=pd.read_json(r.text)
-print(df)
-
-x_val="voyage_dates__imp_arrival_at_port_of_dis_year"
-y_val="voyage_slaves_numbers__imp_total_num_slaves_embarked"
-color_val="voyage_itinerary__imp_port_voyage_begin"
-
-
-
-
-'''fig = px.scatter(df,
-	x=x_val,
-	y=y_val,
-	labels={x_val:md[x_val]['label'],y_val:md[y_val]['label'],color_val:md[color_val]['label']},
-	color="voyage_itinerary__imp_port_voyage_begin"
-	)'''
-	
 
 app.layout = html.Div(children=[
+    dcc.Store(id='memory'),
+    html.H2("Voyages",id="figtitle"),
     dcc.Graph(
         id='voyages-scatter-graph'
     ),
@@ -64,39 +51,47 @@ app.layout = html.Div(children=[
         multi=False
     ),
     	html.Label('Years'),
-    dcc.Slider(
+    dcc.RangeSlider(
         id='year-slider',
         min=1800,
-        max=1830,
-        value=30,
-        marks={str(year): str(year) for year in df['year'].unique()},
-        step=None
+        max=1850,
+        step=1,
+        value=[1810,1815],
+        marks={str(i*markerstep+yr_range[0]):str(i*markerstep+yr_range[0]) for i in range(int((yr_range[-1]-yr_range[0])/markerstep))}
     )
 ])
+
+@app.callback(
+	[Output('memory','data'),Output('figtitle','children')],
+	[Input('year-slider','value')]
+	)
+def update_df(yr):
+	print(yr)
+	r=requests.get('http://127.0.0.1:8000/voyage/table?&voyage_dates__imp_arrival_at_port_of_dis_year=%d,%d' %(yr[0],yr[1]))
+	j=r.text
+	ft="Voyages: %d-%d" %(yr[0],yr[1])
+	return j,ft
 
 @app.callback(
 	Output('voyages-scatter-graph', 'figure'),
 	Input('x_vars', 'value'),
 	Input('y_vars', 'value'),
-	Input('factors', 'value')
+	Input('factors', 'value'),
+	Input('memory','data')
 	)
-def update_figure(x_val,y_val,color_val):
-    #filtered_df = df[df.year == selected_year]
-        
-    fig = px.scatter(df,
-	x=x_val,
-	y=y_val,
-	labels={x_val:md[x_val]['label'],y_val:md[y_val]['label'],color_val:md[color_val]['label']},
-	color=color_val
+def update_figure(x_val,y_val,color_val,j):
+	#filtered_df = df[df.year == selected_year]
+	df=pd.read_json(j)
+	df=df.fillna(0)
+	fig = px.scatter(df,
+		x=x_val,
+		y=y_val,
+		labels={x_val:md[x_val]['label'],y_val:md[y_val]['label'],color_val:md[color_val]['label']},
+		color=color_val
 	)
-    
-    '''fig = px.scatter(filtered_df, x="gdpPercap", y="lifeExp",
-                     size="pop", color="continent", hover_name="country",
-                     log_x=True, size_max=55)'''
+	fig.update_layout(transition_duration=500)
+	return fig
 
-    fig.update_layout(transition_duration=500)
-
-    return fig
 
 
 if __name__ == '__main__':
