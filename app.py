@@ -27,6 +27,7 @@ markerstep=5
 app.layout = html.Div(children=[
     dcc.Store(id='memory'),
     html.H2("Voyages",id="figtitle"),
+     html.H4("",id="figtitle2"),
     dcc.Graph(
         id='voyages-scatter-graph'
     ),
@@ -81,12 +82,13 @@ def update_df(yr):
 	return j,ft
 
 @app.callback(
-	Output('voyages-scatter-graph', 'figure'),
-	Input('group_mode', 'value'),
+	[Output('voyages-scatter-graph', 'figure'),
+	Output('figtitle2','children')],
+	[Input('group_mode', 'value'),
 	Input('x_vars', 'value'),
 	Input('y_vars', 'value'),
 	Input('factors', 'value'),
-	Input('memory','data')
+	Input('memory','data')]
 	)
 
 def update_figure(group_mode,x_val,y_val,color_val,j):
@@ -101,9 +103,10 @@ def update_figure(group_mode,x_val,y_val,color_val,j):
 			
 			if group_mode=='AVERAGE BY FACTOR':
 				df2=df2.groupby(x_val)[y_val].mean()
+				figtitle2='Averages of '+ md[y_val]['label'] +' by ' + md[color_val]['label'];
 			elif group_mode=='SUM BY FACTOR':
 				df2=df2.groupby(x_val)[y_val].sum()
-		
+				figtitle2='Averages of '+ md[y_val]['label'] +' by ' + md[color_val]['label'];
 			x_vals=[i for i in df2.index]
 			y_vals=[df2[i] for i in x_vals]
 			trace_name=color
@@ -119,6 +122,7 @@ def update_figure(group_mode,x_val,y_val,color_val,j):
 		xaxis_title=md[x_val]['label'],
 		yaxis_title=md[y_val]['label'],
 		transition_duration=200)
+		figtitle2=''
 
 	else:
 		df=df.fillna(0)
@@ -129,9 +133,10 @@ def update_figure(group_mode,x_val,y_val,color_val,j):
 		color=color_val
 		)
 		fig.update_layout(transition_duration=500)
+		figtitle2="Data points represent individual voyages (zero for null entries)"
 
 	
-	return fig
+	return fig,figtitle2
 
 
 
