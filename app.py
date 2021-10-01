@@ -103,10 +103,10 @@ def update_figure(group_mode,x_val,y_val,color_val,j):
 			
 			if group_mode=='AVERAGE BY FACTOR':
 				df2=df2.groupby(x_val)[y_val].mean()
-				figtitle2='Averages of '+ md[y_val]['label'] +' by ' + md[color_val]['label'];
+				figtitle2='Stacked averages of '+ md[y_val]['label'] +' for each ' + md[color_val]['label'];
 			elif group_mode=='SUM BY FACTOR':
 				df2=df2.groupby(x_val)[y_val].sum()
-				figtitle2='Averages of '+ md[y_val]['label'] +' by ' + md[color_val]['label'];
+				figtitle2='Stacked totals of '+ md[y_val]['label'] +' for each ' + md[color_val]['label'];
 			x_vals=[i for i in df2.index]
 			y_vals=[df2[i] for i in x_vals]
 			trace_name=color
