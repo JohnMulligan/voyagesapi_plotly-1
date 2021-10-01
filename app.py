@@ -122,7 +122,6 @@ def update_figure(group_mode,x_val,y_val,color_val,j):
 		xaxis_title=md[x_val]['label'],
 		yaxis_title=md[y_val]['label'],
 		transition_duration=200)
-		figtitle2=''
 
 	else:
 		df=df.fillna(0)
