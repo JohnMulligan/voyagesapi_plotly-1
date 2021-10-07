@@ -76,7 +76,7 @@ app.layout = html.Div(children=[
 	)
 def update_df(yr):
 	print(yr)
-	r=requests.get('http://127.0.0.1:8000/voyage/table?&voyage_dates__imp_arrival_at_port_of_dis_year=%d,%d' %(yr[0],yr[1]))
+	r=requests.get('http://127.0.0.1:8000/voyage/scatterdf?&voyage_dates__imp_arrival_at_port_of_dis_year=%d,%d' %(yr[0],yr[1]))
 	j=r.text
 	ft="Voyages: %d-%d" %(yr[0],yr[1])
 	return j,ft
