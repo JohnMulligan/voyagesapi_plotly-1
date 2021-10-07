@@ -116,7 +116,9 @@ def update_figure(group_mode,x_val,y_val,color_val,j):
 				y=y_vals,
 				name=trace_name,
 				stackgroup='one',
+				line= {'shape': 'spline'},
 				mode='none')
+				
 			)
 		fig.update_layout(
 		xaxis_title=md[x_val]['label'],
@@ -128,6 +130,7 @@ def update_figure(group_mode,x_val,y_val,color_val,j):
 		fig = px.scatter(df,
 		x=x_val,
 		y=y_val,
+		line= {'shape': 'spline'},
 		labels={x_val:md[x_val]['label'],y_val:md[y_val]['label'],color_val:md[color_val]['label']},
 		color=color_val
 		)
