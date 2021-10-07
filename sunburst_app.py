@@ -92,22 +92,14 @@ def update_df(yr):
 def update_figure(broadregion,region,place,numeric_values,j):
 	#filtered_df = df[df.year == selected_year]
 	df=pd.read_json(j)
-	
-	
-	
 	#sub "unknown" for text vars
 	df=df.fillna({i:"unknown" for i in geo_sunburst_broadregion_vars+geo_sunburst_region_vars+geo_sunburst_place_vars})
-	print(df)
 	figtitle2=md[numeric_values]['label'] +' by '+ md[broadregion]['label'] +' // ' + md[region]['label'] + ' // ' + md[place]['label']
-	
-	#df=df.fillna(0)
 	fig = px.sunburst(df, path=[broadregion,region,place], values=numeric_values,height=800)
 	fig.update_layout(transition_duration=500)
-
-	
 	return fig,figtitle2
 
 
 
 if __name__ == '__main__':
-    app.run_server(host='0.0.0.0',debug=True,port=5000)
+    app.run_server(host='0.0.0.0',debug=False,port=5000)
