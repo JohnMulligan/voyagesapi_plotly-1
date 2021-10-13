@@ -138,6 +138,8 @@ def update_figure(group_mode,x_val,y_val,color_val,j):
 		figtitle2="Data points represent individual voyages (zero for null entries)"
 
 	
+	fig.write_html('sample_scatter.html')
+	
 	return fig,figtitle2
 
 
