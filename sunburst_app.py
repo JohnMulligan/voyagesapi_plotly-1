@@ -72,12 +72,16 @@ app.layout = html.Div(children=[
 	[Output('memory','data'),Output('figtitle','children')],
 	[Input('year-slider','value')]
 	)
+	
 def update_df(yr):
 	print(yr)
-	r=requests.get('http://127.0.0.1:8000/voyage/sunburstdf?&voyage_dates__imp_arrival_at_port_of_dis_year=%d,%d' %(yr[0],yr[1]))
+	selected_fields=list(set(geo_sunburst_broadregion_vars+geo_sunburst_region_vars+geo_sunburst_place_vars+sunburst_plot_values))
+	r=requests.get('http://127.0.0.1:8000/voyage/dataframes?&voyage_dates__imp_arrival_at_port_of_dis_year=%d,%d&selected_fields=%s' %(yr[0],yr[1],','.join(selected_fields)))
 	j=r.text
 	ft="Voyages: %d-%d" %(yr[0],yr[1])
 	return j,ft
+	
+	
 
 @app.callback(
 	[Output('voyages-sunburst-graph', 'figure'),
