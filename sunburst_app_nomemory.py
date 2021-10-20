@@ -25,8 +25,7 @@ markerstep=5
 
 app.layout = html.Div(children=[
     dcc.Store(id='memory'),
-	html.H3("SUNBURST APP -- DOWNLOADS LARGE DATAFRAME (SLOW-ISH), THEN ALLOWS YOU TO FACET IT (FAST)"),
-    html.H4("Voyages",id="figtitle"),
+	html.H3("NO MEMORY SUNBURST APP -- DOWNLOADS SMALL DATAFRAME BUT HAS TO RELOAD EVERY TIME YOU PRESS A BUTTON -- STILL PREFERABLE IN THIS CASE"),
     dcc.Graph(
         id='voyages-sunburst-graph'
     ),
@@ -68,17 +67,7 @@ app.layout = html.Div(children=[
     )
 ])
 
-@app.callback(
-	[Output('memory','data'),Output('figtitle','children')],
-	[Input('year-slider','value')]
-	)
-def update_df(yr):
-	print(yr)
-	selected_fields=list(set(geo_sunburst_broadregion_vars+geo_sunburst_region_vars+geo_sunburst_place_vars+sunburst_plot_values))
-	r=requests.get('http://127.0.0.1:8000/voyage/dataframes?&voyage_dates__imp_arrival_at_port_of_dis_year=%d,%d&selected_fields=%s' %(yr[0],yr[1],','.join(selected_fields)))
-	j=r.text
-	ft="Voyages: %d-%d" %(yr[0],yr[1])
-	return j,ft
+
 	
 @app.callback(
 	Output('voyages-sunburst-graph', 'figure'),
@@ -86,17 +75,22 @@ def update_df(yr):
 	Input('region', 'value'),
 	Input('place', 'value'),
 	Input('numeric-values', 'value'),
-	Input('memory','data')]
+	Input('year-slider','value')]
 	)
-def update_figure(broadregion,region,place,numeric_values,j):
+def update_figure(broadregion,region,place,numeric_values,yr):
 	#filtered_df = df[df.year == selected_year]
+	selected_fields=[broadregion,region,place,numeric_values]
+	#selected_fields=list(set(geo_sunburst_broadregion_vars+geo_sunburst_region_vars+geo_sunburst_place_vars+sunburst_plot_values))
+	r=requests.get('http://127.0.0.1:8000/voyage/dataframes?&voyage_dates__imp_arrival_at_port_of_dis_year=%d,%d&selected_fields=%s' %(yr[0],yr[1],','.join(selected_fields)))
+	j=r.text
+	ft="Voyages: %d-%d" %(yr[0],yr[1])
 	df=pd.read_json(j)
 	#sub "unknown" for text vars
 	df=df.fillna({i:"unknown" for i in geo_sunburst_broadregion_vars+geo_sunburst_region_vars+geo_sunburst_place_vars})
-	figtitle=md[numeric_values]['label'] +' by '+ md[broadregion]['label'] +' // ' + md[region]['label'] + ' // ' + md[place]['label']
+	figtitle="Voyages: %d-%d // " %(yr[0],yr[1])+md[numeric_values]['label'] +' by '+ md[broadregion]['label'] +' // ' + md[region]['label'] + ' // ' + md[place]['label']
 	fig = px.sunburst(df, path=[broadregion,region,place], values=numeric_values,height=800,title=figtitle)
 	fig.update_layout(transition_duration=500)
 	return fig
 
 if __name__ == '__main__':
-    app.run_server(host='0.0.0.0',debug=False,port=5000)
+    app.run_server(host='0.0.0.0',debug=False,port=5500)
