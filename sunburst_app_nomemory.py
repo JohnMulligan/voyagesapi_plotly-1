@@ -78,14 +78,11 @@ app.layout = html.Div(children=[
 	Input('year-slider','value')]
 	)
 def update_figure(broadregion,region,place,numeric_values,yr):
-	#filtered_df = df[df.year == selected_year]
 	selected_fields=[broadregion,region,place,numeric_values]
-	#selected_fields=list(set(geo_sunburst_broadregion_vars+geo_sunburst_region_vars+geo_sunburst_place_vars+sunburst_plot_values))
 	r=requests.get('http://127.0.0.1:8000/voyage/dataframes?&voyage_dates__imp_arrival_at_port_of_dis_year=%d,%d&selected_fields=%s' %(yr[0],yr[1],','.join(selected_fields)))
 	j=r.text
 	ft="Voyages: %d-%d" %(yr[0],yr[1])
 	df=pd.read_json(j)
-	print(df)
 	#sub "unknown" for text vars
 	df=df.fillna({i:"unknown" for i in geo_sunburst_broadregion_vars+geo_sunburst_region_vars+geo_sunburst_place_vars})
 	figtitle="Voyages: %d-%d // " %(yr[0],yr[1])+md[numeric_values]['label'] +' by '+ md[broadregion]['label'] +' // ' + md[region]['label'] + ' // ' + md[place]['label']
