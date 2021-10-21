@@ -81,8 +81,8 @@ app.layout = html.Div(children=[
 
 def update_figure(group_mode,x_val,y_val,color_val,yr):
 	#filtered_df = df[df.year == selected_year]
-	#selected_fields=[x_val,y_val,color_val]
-	selected_fields=list(set(scatter_plot_x_vars+scatter_plot_y_vars+scatter_plot_factors))
+	selected_fields=[x_val,y_val,color_val]
+	#selected_fields=list(set(scatter_plot_x_vars+scatter_plot_y_vars+scatter_plot_factors))
 	r=requests.get('http://127.0.0.1:8000/voyage/dataframes?voyage_dates__imp_arrival_at_port_of_dis_year=%d,%d&selected_fields=%s' %(yr[0],yr[1],','.join(selected_fields)))
 	j=r.text
 	df=pd.read_json(j)

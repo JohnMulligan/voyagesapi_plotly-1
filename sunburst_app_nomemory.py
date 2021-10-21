@@ -85,6 +85,7 @@ def update_figure(broadregion,region,place,numeric_values,yr):
 	j=r.text
 	ft="Voyages: %d-%d" %(yr[0],yr[1])
 	df=pd.read_json(j)
+	print(df)
 	#sub "unknown" for text vars
 	df=df.fillna({i:"unknown" for i in geo_sunburst_broadregion_vars+geo_sunburst_region_vars+geo_sunburst_place_vars})
 	figtitle="Voyages: %d-%d // " %(yr[0],yr[1])+md[numeric_values]['label'] +' by '+ md[broadregion]['label'] +' // ' + md[region]['label'] + ' // ' + md[place]['label']
@@ -93,4 +94,4 @@ def update_figure(broadregion,region,place,numeric_values,yr):
 	return fig
 
 if __name__ == '__main__':
-    app.run_server(host='0.0.0.0',debug=False,port=5500)
+    app.run_server(host='0.0.0.0',debug=True,port=5500)
