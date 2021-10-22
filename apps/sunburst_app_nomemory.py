@@ -7,27 +7,20 @@ import plotly.graph_objects as go
 import pandas as pd
 import requests
 import json
-from sunburst_vars import *
+from apps.sunburst_vars import *
+from app import app
 
-
-import plotly.express as px
-
-app = dash.Dash(__name__)
-server=app.server
 r=requests.options('http://127.0.0.1:8000/voyage/')
 md=json.loads(r.text)
-#print(md)
-
-#print(df)
 
 yr_range=range(1800,1850)
 markerstep=5
 
-app.layout = html.Div(children=[
+layout = html.Div(children=[
     dcc.Store(id='memory'),
 	html.H3("NO MEMORY SUNBURST APP -- DOWNLOADS SMALL DATAFRAME BUT HAS TO RELOAD EVERY TIME YOU PRESS A BUTTON -- STILL PREFERABLE IN THIS CASE"),
     dcc.Graph(
-        id='voyages-sunburst-graph'
+        id='voyages-sunburst-graph-nomemory'
     ),
     html.Label('Broad Region'),
     dcc.Dropdown(
@@ -70,7 +63,7 @@ app.layout = html.Div(children=[
 
 	
 @app.callback(
-	Output('voyages-sunburst-graph', 'figure'),
+	Output('voyages-sunburst-graph-nomemory', 'figure'),
 	[Input('broadregion', 'value'),
 	Input('region', 'value'),
 	Input('place', 'value'),
@@ -89,6 +82,3 @@ def update_figure(broadregion,region,place,numeric_values,yr):
 	fig = px.sunburst(df, path=[broadregion,region,place], values=numeric_values,height=800,title=figtitle)
 	fig.update_layout(transition_duration=500)
 	return fig
-
-if __name__ == '__main__':
-    app.run_server(host='0.0.0.0',debug=True,port=5500)

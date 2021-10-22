@@ -14,6 +14,17 @@ This repository contains several interactive visualizations of the Voyages datas
 
 Then you'll have to make sure you've got the new voyages api (referenced above) running at 127.0.0.1:8000
 
+TO LAUNCH THE APPS RUN
+
+	python app_router.py
+	
+The apps are then available at:
+
+* http://0.0.0.0:8050/apps/sunburst_app
+* http://0.0.0.0:8050/apps/sunburst_app_nomemory
+* http://0.0.0.0:8050/apps/scatter_app
+* http://0.0.0.0:8050/apps/scatter_app_nomemory
+
 ## General Methods
 
 ### Metadata and variables

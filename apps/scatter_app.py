@@ -7,25 +7,19 @@ import plotly.graph_objects as go
 import pandas as pd
 import requests
 import json
-from scatter_vars import *
+from apps.scatter_vars import *
+from app import app
 
-
-import plotly.express as px
-
-app = dash.Dash(__name__)
-server=app.server
 r=requests.options('http://127.0.0.1:8000/voyage/')
 md=json.loads(r.text)
-#print(md)
-
-#print(df)
 
 yr_range=range(1800,1850)
 markerstep=5
 
-
-app.layout = html.Div(children=[
-	html.H3("NO MEMORY SCATTER APP -- DOWNLOADS SMALL CHUNK OF DATA FASTER BUT HAS TO RELOAD EVERY TIME YOU PRESS A BUTTON."),
+layout = html.Div(children=[
+    dcc.Store(id='scatter-memory'),
+    html.H1("SCATTER APP -- DOWNLOADS LARGE DATAFRAME (SLOW-ISH), THEN ALLOWS YOU TO FACET IT (FAST)"),
+    html.H2("Voyages",id="scatter-memory-figtitle"),
     dcc.Graph(
         id='voyages-scatter-graph'
     ),
@@ -68,7 +62,17 @@ app.layout = html.Div(children=[
     )
 ])
 
-
+@app.callback(
+	[Output('scatter-memory','data'),Output('scatter-memory-figtitle','children')],
+	[Input('year-slider','value')]
+	)
+def update_df(yr):
+	print(yr)
+	selected_fields=list(set(scatter_plot_x_vars+scatter_plot_y_vars+scatter_plot_factors))
+	r=requests.get('http://127.0.0.1:8000/voyage/dataframes?voyage_dates__imp_arrival_at_port_of_dis_year=%d,%d&selected_fields=%s' %(yr[0],yr[1],','.join(selected_fields)))
+	j=r.text
+	ft="Voyages: %d-%d" %(yr[0],yr[1])
+	return j,ft
 
 @app.callback(
 	Output('voyages-scatter-graph', 'figure'),
@@ -76,15 +80,11 @@ app.layout = html.Div(children=[
 	Input('x_vars', 'value'),
 	Input('y_vars', 'value'),
 	Input('factors', 'value'),
-	Input('year-slider','value')]
+	Input('scatter-memory','data')]
 	)
 
-def update_figure(group_mode,x_val,y_val,color_val,yr):
+def update_figure(group_mode,x_val,y_val,color_val,j):
 	#filtered_df = df[df.year == selected_year]
-	selected_fields=[x_val,y_val,color_val]
-	#selected_fields=list(set(scatter_plot_x_vars+scatter_plot_y_vars+scatter_plot_factors))
-	r=requests.get('http://127.0.0.1:8000/voyage/dataframes?voyage_dates__imp_arrival_at_port_of_dis_year=%d,%d&selected_fields=%s' %(yr[0],yr[1],','.join(selected_fields)))
-	j=r.text
 	df=pd.read_json(j)
 	colors=df[color_val].unique()	
 	
@@ -129,16 +129,9 @@ def update_figure(group_mode,x_val,y_val,color_val,yr):
 		figtitle="Data points represent individual voyages (zero for null entries)"
 	
 	fig.update_layout(
-		title="Voyages: %s-%s<br>%s" %(str(yr[0]),str(yr[1]),figtitle),
+		title=figtitle,
 		legend_title=md[color_val]['label']
 	)
-
-	
-	#fig.write_html('sample_scatter.html')
 	
 	return fig
 
-
-
-if __name__ == '__main__':
-    app.run_server(host='0.0.0.0',debug=False,port=3500)

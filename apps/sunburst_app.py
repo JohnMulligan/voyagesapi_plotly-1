@@ -7,26 +7,19 @@ import plotly.graph_objects as go
 import pandas as pd
 import requests
 import json
-from sunburst_vars import *
+from apps.sunburst_vars import *
+from app import app
 
-
-import plotly.express as px
-
-app = dash.Dash(__name__)
-server=app.server
 r=requests.options('http://127.0.0.1:8000/voyage/')
 md=json.loads(r.text)
-#print(md)
-
-#print(df)
 
 yr_range=range(1800,1850)
 markerstep=5
 
-app.layout = html.Div(children=[
-    dcc.Store(id='memory'),
+layout = html.Div(children=[
+    dcc.Store(id='sunburst-memory'),
 	html.H3("SUNBURST APP -- DOWNLOADS LARGE DATAFRAME (SLOW-ISH), THEN ALLOWS YOU TO FACET IT (FAST)"),
-    html.H4("Voyages",id="figtitle"),
+    html.H4("Voyages",id="sunburst-memory-figtitle"),
     dcc.Graph(
         id='voyages-sunburst-graph'
     ),
@@ -69,7 +62,7 @@ app.layout = html.Div(children=[
 ])
 
 @app.callback(
-	[Output('memory','data'),Output('figtitle','children')],
+	[Output('sunburst-memory','data'),Output('sunburst-memory-figtitle','children')],
 	[Input('year-slider','value')]
 	)
 def update_df(yr):
@@ -86,7 +79,7 @@ def update_df(yr):
 	Input('region', 'value'),
 	Input('place', 'value'),
 	Input('numeric-values', 'value'),
-	Input('memory','data')]
+	Input('sunburst-memory','data')]
 	)
 def update_figure(broadregion,region,place,numeric_values,j):
 	#filtered_df = df[df.year == selected_year]
@@ -97,6 +90,3 @@ def update_figure(broadregion,region,place,numeric_values,j):
 	fig = px.sunburst(df, path=[broadregion,region,place], values=numeric_values,height=800,title=figtitle)
 	fig.update_layout(transition_duration=500)
 	return fig
-
-if __name__ == '__main__':
-    app.run_server(host='0.0.0.0',debug=False,port=5000)
