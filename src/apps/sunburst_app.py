@@ -10,17 +10,18 @@ import json
 from apps.sunburst_vars import *
 from app import app
 
-r=requests.options('http://127.0.0.1:8000/voyage/')
+r=requests.options('http://voyagesapi-django:8000/voyage/')
 md=json.loads(r.text)
 
 yr_range=range(1800,1850)
 markerstep=5
 
 layout = html.Div(children=[
-    dcc.Store(id='memory'),
-	html.H3("NO MEMORY SUNBURST APP -- DOWNLOADS SMALL DATAFRAME BUT HAS TO RELOAD EVERY TIME YOU PRESS A BUTTON -- STILL PREFERABLE IN THIS CASE"),
+    dcc.Store(id='sunburst-memory'),
+	html.H3("SUNBURST APP -- DOWNLOADS LARGE DATAFRAME (SLOW-ISH), THEN ALLOWS YOU TO FACET IT (FAST)"),
+    html.H4("Voyages",id="sunburst-memory-figtitle"),
     dcc.Graph(
-        id='voyages-sunburst-graph-nomemory'
+        id='voyages-sunburst-graph'
     ),
     html.Label('Broad Region'),
     dcc.Dropdown(
@@ -60,25 +61,32 @@ layout = html.Div(children=[
     )
 ])
 
-
-	
 @app.callback(
-	Output('voyages-sunburst-graph-nomemory', 'figure'),
+	[Output('sunburst-memory','data'),Output('sunburst-memory-figtitle','children')],
+	[Input('year-slider','value')]
+	)
+def update_df(yr):
+	print(yr)
+	selected_fields=list(set(geo_sunburst_broadregion_vars+geo_sunburst_region_vars+geo_sunburst_place_vars+sunburst_plot_values))
+	r=requests.get('http://voyagesapi-django:8000/voyage/dataframes?&voyage_dates__imp_arrival_at_port_of_dis_year=%d,%d&selected_fields=%s' %(yr[0],yr[1],','.join(selected_fields)))
+	j=r.text
+	ft="Voyages: %d-%d" %(yr[0],yr[1])
+	return j,ft
+
+@app.callback(
+	Output('voyages-sunburst-graph', 'figure'),
 	[Input('broadregion', 'value'),
 	Input('region', 'value'),
 	Input('place', 'value'),
 	Input('numeric-values', 'value'),
-	Input('year-slider','value')]
+	Input('sunburst-memory','data')]
 	)
-def update_figure(broadregion,region,place,numeric_values,yr):
-	selected_fields=[broadregion,region,place,numeric_values]
-	r=requests.get('http://127.0.0.1:8000/voyage/dataframes?&voyage_dates__imp_arrival_at_port_of_dis_year=%d,%d&selected_fields=%s' %(yr[0],yr[1],','.join(selected_fields)))
-	j=r.text
-	ft="Voyages: %d-%d" %(yr[0],yr[1])
+def update_figure(broadregion,region,place,numeric_values,j):
+	#filtered_df = df[df.year == selected_year]
 	df=pd.read_json(j)
 	#sub "unknown" for text vars
 	df=df.fillna({i:"unknown" for i in geo_sunburst_broadregion_vars+geo_sunburst_region_vars+geo_sunburst_place_vars})
-	figtitle="Voyages: %d-%d // " %(yr[0],yr[1])+md[numeric_values]['label'] +' by '+ md[broadregion]['label'] +' // ' + md[region]['label'] + ' // ' + md[place]['label']
+	figtitle=md[numeric_values]['label'] +' by '+ md[broadregion]['label'] +' // ' + md[region]['label'] + ' // ' + md[place]['label']
 	fig = px.sunburst(df, path=[broadregion,region,place], values=numeric_values,height=800,title=figtitle)
 	fig.update_layout(transition_duration=500)
 	return fig

@@ -1,0 +1,21 @@
+---
+version: "3.7"
+
+services:
+  voyagesapi-plotly:
+    image: "voyagesapi-plotly"
+    container_name: "voyagesapi-plotly"
+    hostname: "voyagesapi-plotly"
+    restart: "on-failure"
+    ports:
+      - "3000:3000"
+    volumes:
+      - "./src/:/srv/voyagesapi-plotly"
+    build:
+      context: "."
+      dockerfile: "./docker/Dockerfile"
+    command: app_router.py
+
+networks:
+  default:
+    name: voyagesapi

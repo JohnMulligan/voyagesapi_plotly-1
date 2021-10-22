@@ -10,7 +10,7 @@ import json
 from apps.scatter_vars import *
 from app import app
 
-r=requests.options('http://127.0.0.1:8000/voyage/')
+r=requests.options('http://voyagesapi-django:8000/voyage')
 md=json.loads(r.text)
 
 yr_range=range(1800,1850)
@@ -69,7 +69,7 @@ layout = html.Div(children=[
 def update_df(yr):
 	print(yr)
 	selected_fields=list(set(scatter_plot_x_vars+scatter_plot_y_vars+scatter_plot_factors))
-	r=requests.get('http://127.0.0.1:8000/voyage/dataframes?voyage_dates__imp_arrival_at_port_of_dis_year=%d,%d&selected_fields=%s' %(yr[0],yr[1],','.join(selected_fields)))
+	r=requests.get('http://voyagesapi-django:8000/voyage/dataframes?voyage_dates__imp_arrival_at_port_of_dis_year=%d,%d&selected_fields=%s' %(yr[0],yr[1],','.join(selected_fields)))
 	j=r.text
 	ft="Voyages: %d-%d" %(yr[0],yr[1])
 	return j,ft
@@ -86,13 +86,13 @@ def update_df(yr):
 def update_figure(group_mode,x_val,y_val,color_val,j):
 	#filtered_df = df[df.year == selected_year]
 	df=pd.read_json(j)
-	colors=df[color_val].unique()	
-	
+	colors=df[color_val].unique()
+
 	if group_mode != 'INDIVIDUAL DATAPOINTS':
 		fig=go.Figure()
 		for color in colors:
 			df2=df.loc[df[color_val]==color]
-			
+
 			if group_mode=='AVERAGE BY FACTOR':
 				df2=df2.groupby(x_val)[y_val].mean()
 				figtitle='Stacked averages of '+ md[y_val]['label'] +' for each ' + md[color_val]['label'];
@@ -102,7 +102,7 @@ def update_figure(group_mode,x_val,y_val,color_val,j):
 			x_vals=[i for i in df2.index]
 			y_vals=[df2[i] for i in x_vals]
 			trace_name=color
-		
+
 			fig.add_trace(go.Scatter(
 				x=x_vals,
 				y=y_vals,
@@ -110,7 +110,7 @@ def update_figure(group_mode,x_val,y_val,color_val,j):
 				stackgroup='one',
 				line= {'shape': 'spline'},
 				mode='none')
-				
+
 			)
 		fig.update_layout(
 		xaxis_title=md[x_val]['label'],
@@ -127,11 +127,9 @@ def update_figure(group_mode,x_val,y_val,color_val,j):
 		)
 		fig.update_layout(transition_duration=500)
 		figtitle="Data points represent individual voyages (zero for null entries)"
-	
+
 	fig.update_layout(
 		title=figtitle,
 		legend_title=md[color_val]['label']
 	)
-	
 	return fig
-
