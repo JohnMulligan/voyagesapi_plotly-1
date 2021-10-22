@@ -141,11 +141,11 @@ def update_figure(group_mode,x_val,y_val,color_val,j):
 		legend_title=md[color_val]['label']
 	)
 	
-	fig.write_html('sample_scatter.html')
+	#fig.write_html('sample_scatter.html')
 	
 	return fig
 
 
 
 if __name__ == '__main__':
-    app.run_server(host='0.0.0.0',debug=False,port=3000)
+    app.run_server(host='0.0.0.0',debug=True,port=3000)
