@@ -6,13 +6,45 @@ Specifically, it hits the dataframe endpoint, which was built for this purpose.
 
 This repository contains several interactive visualizations of the Voyages dataset, rendered in Python Dash: https://dash.plotly.com/deployment
 
-## To install
+## Local Deployment
 
-	python3 -m venv venv
-	source venv/bin/activate
-	pip3 install -r requirements.txt
+Be sure you have a local deployment of the Voyages API running at http://127.0.0.1:8000/.
 
-Then you'll have to make sure you've got the new voyages api (referenced above) running at 127.0.0.1:8000
+Build and run the app container. The default is scatter_app.
+
+```bash
+host:~/Projects/voyagesapi_plotly$ docker-compose up
+```
+
+Run specific apps by setting the APP environment variable.
+
+```bash
+host:~/Projects/voyagesapi_plotly$ APP=scatter_app docker-compose up
+host:~/Projects/voyagesapi_plotly$ APP=scatter_app_nomemory docker-compose up
+host:~/Projects/voyagesapi_plotly$ APP=sunburst_app docker-compose up
+host:~/Projects/voyagesapi_plotly$ APP=sunburst_app_nomemory docker-compose up
+```
+
+View container logs.
+
+```bash
+host:~/Projects/voyagesapi_plotly$ docker logs voyagesapi-plotly
+```
+
+Note the following project resources:
+
+* Plotly Apps: http://127.0.0.1:3000/
+
+## Cleanup
+
+```bash
+host:~/Projects/voyagesapi_plotly$ docker-compose down
+
+host:~/Projects/voyagesapi_plotly$ docker container prune
+host:~/Projects/voyagesapi_plotly$ docker image prune
+host:~/Projects/voyagesapi_plotly$ docker volume prune
+host:~/Projects/voyagesapi_plotly$ docker network prune
+```
 
 ## General Methods
 
