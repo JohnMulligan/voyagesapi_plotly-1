@@ -13,8 +13,8 @@ from app import app
 r=requests.options('http://voyagesapi-django:8000/voyage/')
 md=json.loads(r.text)
 
-yr_range=range(1800,1850)
-markerstep=5
+yr_range=range(1514,1866)
+markerstep=20
 
 layout = html.Div(children=[
 	html.H3("NO MEMORY SUNBURST APP -- DOWNLOADS SMALL DATAFRAME BUT HAS TO RELOAD EVERY TIME YOU PRESS A BUTTON -- STILL PREFERABLE IN THIS CASE"),
@@ -51,10 +51,10 @@ layout = html.Div(children=[
     ),
     dcc.RangeSlider(
         id='year-slider',
-        min=1800,
-        max=1850,
+        min=yr_range[0],
+        max=yr_range[-1],
         step=1,
-        value=[1810,1812],
+        value=[1800,1850],
         marks={str(i*markerstep+yr_range[0]):str(i*markerstep+yr_range[0]) for i in range(int((yr_range[-1]-yr_range[0])/markerstep))}
     )
 ])
@@ -73,11 +73,14 @@ def update_figure(broadregion,region,place,numeric_values,yr):
 	selected_fields=[broadregion,region,place,numeric_values]
 	r=requests.get('http://voyagesapi-django:8000/voyage/dataframes?&voyage_dates__imp_arrival_at_port_of_dis_year=%d,%d&selected_fields=%s' %(yr[0],yr[1],','.join(selected_fields)))
 	j=r.text
-	ft="Voyages: %d-%d" %(yr[0],yr[1])
 	df=pd.read_json(j)
-	#sub "unknown" for text vars
 	df=df.fillna({i:"unknown" for i in geo_sunburst_broadregion_vars+geo_sunburst_region_vars+geo_sunburst_place_vars})
-	figtitle="Voyages: %d-%d // " %(yr[0],yr[1])+md[numeric_values]['label'] +' by '+ md[broadregion]['label'] +' // ' + md[region]['label'] + ' // ' + md[place]['label']
-	fig = px.sunburst(df, path=[broadregion,region,place], values=numeric_values,height=800,title=figtitle)
-	fig.update_layout(transition_duration=500)
+	figtitle="Voyages: %d-%d" %(yr[0],yr[1])+ ", "+md[numeric_values]['label'] +' by:<br>'+ md[broadregion]['label'] +'<br>' + md[region]['label'] + '<br>' + md[place]['label']
+	fig = px.sunburst(df,
+		path=[broadregion,region,place],
+		values=numeric_values,
+		height=800,
+	)
+	fig.update_layout(transition_duration=500,title=figtitle)
+	#fig.write_html("sunburst_nomem.html")
 	return fig

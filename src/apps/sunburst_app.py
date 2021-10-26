@@ -13,8 +13,8 @@ from app import app
 r=requests.options('http://voyagesapi-django:8000/voyage/')
 md=json.loads(r.text)
 
-yr_range=range(1800,1850)
-markerstep=5
+yr_range=range(1514,1866)
+markerstep=20
 
 layout = html.Div(children=[
     dcc.Store(id='sunburst-memory'),
@@ -53,10 +53,10 @@ layout = html.Div(children=[
     ),
     dcc.RangeSlider(
         id='year-slider',
-        min=1800,
-        max=1850,
+        min=yr_range[0],
+        max=yr_range[-1],
         step=1,
-        value=[1810,1812],
+        value=[1800,1850],
         marks={str(i*markerstep+yr_range[0]):str(i*markerstep+yr_range[0]) for i in range(int((yr_range[-1]-yr_range[0])/markerstep))}
     )
 ])

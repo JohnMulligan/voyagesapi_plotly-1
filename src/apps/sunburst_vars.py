@@ -1,37 +1,36 @@
 geo_sunburst_broadregion_vars=[
-'voyage_itinerary__imp_broad_region_of_slave_purchase',
-'voyage_itinerary__imp_broad_region_slave_dis',
-'voyage_itinerary__imp_broad_region_voyage_begin'
+'voyage_itinerary__imp_broad_region_of_slave_purchase__broad_region',
+'voyage_itinerary__imp_broad_region_slave_dis__broad_region',
+'voyage_itinerary__imp_broad_region_voyage_begin__broad_region'
 ]
 
 ##SOMETHING IS WRONG WITH voyage_itinerary__broad_region_of_return
 
 geo_sunburst_region_vars = [
-'voyage_itinerary__first_landing_region',
-'voyage_itinerary__first_region_slave_emb',
-'voyage_itinerary__imp_principal_region_of_slave_purchase',
-'voyage_itinerary__imp_principal_region_slave_dis',
-'voyage_itinerary__imp_region_voyage_begin',
-'voyage_itinerary__int_first_region_purchase_slaves',
-'voyage_itinerary__int_first_region_slave_landing',
-'voyage_itinerary__int_second_place_region_slave_landing',
-'voyage_itinerary__int_second_region_purchase_slaves',
-'voyage_itinerary__second_landing_region',
-'voyage_itinerary__second_region_slave_emb',
-'voyage_itinerary__third_landing_region',
-'voyage_itinerary__third_region_slave_emb'
+'voyage_itinerary__first_landing_region__region',
+'voyage_itinerary__first_region_slave_emb__region',
+'voyage_itinerary__imp_principal_region_of_slave_purchase__region',
+'voyage_itinerary__imp_principal_region_slave_dis__region',
+'voyage_itinerary__imp_region_voyage_begin__region',
+'voyage_itinerary__int_first_region_purchase_slaves__region',
+'voyage_itinerary__int_first_region_slave_landing__region',
+'voyage_itinerary__int_second_region_purchase_slaves__region',
+'voyage_itinerary__second_landing_region__region',
+'voyage_itinerary__second_region_slave_emb__region',
+'voyage_itinerary__third_landing_region__region',
+'voyage_itinerary__third_region_slave_emb__region'
 ]
 
 geo_sunburst_place_vars = [
-'voyage_itinerary__first_landing_place',
-'voyage_itinerary__first_place_slave_purchase',
-'voyage_itinerary__imp_principal_place_of_slave_purchase',
-'voyage_itinerary__int_second_place_region_slave_landing',
-'voyage_itinerary__principal_place_of_slave_purchase',
-'voyage_itinerary__second_landing_place',
-'voyage_itinerary__second_place_slave_purchase',
-'voyage_itinerary__third_landing_place',
-'voyage_itinerary__third_place_slave_purchase'
+'voyage_itinerary__first_landing_place__place',
+'voyage_itinerary__first_place_slave_purchase__place',
+'voyage_itinerary__imp_principal_place_of_slave_purchase__place',
+'voyage_itinerary__int_second_place_region_slave_landing__place',
+'voyage_itinerary__principal_place_of_slave_purchase__place',
+'voyage_itinerary__second_landing_place__place',
+'voyage_itinerary__second_place_slave_purchase__place',
+'voyage_itinerary__third_landing_place__place',
+'voyage_itinerary__third_place_slave_purchase__place'
 ]
 
 

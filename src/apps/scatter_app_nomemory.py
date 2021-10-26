@@ -13,8 +13,8 @@ from app import app
 r=requests.options('http://voyagesapi-django:8000/voyage/')
 md=json.loads(r.text)
 
-yr_range=range(1800,1850)
-markerstep=5
+yr_range=range(1514,1866)
+markerstep=20
 
 layout = html.Div(children=[
 	html.H3("NO MEMORY SCATTER APP -- DOWNLOADS SMALL CHUNK OF DATA FASTER BUT HAS TO RELOAD EVERY TIME YOU PRESS A BUTTON."),
@@ -39,7 +39,7 @@ layout = html.Div(children=[
     dcc.Dropdown(
     	id='factors',
         options= [{'label':md[i]['label'],'value':i} for i in scatter_plot_factors],
-        value='voyage_itinerary__imp_port_voyage_begin',
+        value='voyage_itinerary__imp_port_voyage_begin__place',
         multi=False
     ),
     html.Label('AVERAGE, SUM // OR SHOW INDIVIDUAL DATAPOINTS'),
@@ -52,10 +52,10 @@ layout = html.Div(children=[
     	html.Label('Years'),
     dcc.RangeSlider(
         id='year-slider',
-        min=1800,
-        max=1850,
+        min=yr_range[0],
+        max=yr_range[-1],
         step=1,
-        value=[1810,1815],
+        value=[1800,1810],
         marks={str(i*markerstep+yr_range[0]):str(i*markerstep+yr_range[0]) for i in range(int((yr_range[-1]-yr_range[0])/markerstep))}
     )
 ])
@@ -72,10 +72,10 @@ layout = html.Div(children=[
 	)
 
 def update_figure(group_mode,x_val,y_val,color_val,yr):
-	#filtered_df = df[df.year == selected_year]
 	selected_fields=[x_val,y_val,color_val]
-	#selected_fields=list(set(scatter_plot_x_vars+scatter_plot_y_vars+scatter_plot_factors))
-	r=requests.get('http://voyagesapi-django:8000/voyage/dataframes?voyage_dates__imp_arrival_at_port_of_dis_year=%d,%d&selected_fields=%s' %(yr[0],yr[1],','.join(selected_fields)))
+	url='http://voyagesapi-django:8000/voyage/dataframes?voyage_dates__imp_arrival_at_port_of_dis_year=%d,%d&selected_fields=%s' %(yr[0],yr[1],','.join(selected_fields))
+	print(url)
+	r=requests.get(url)
 	j=r.text
 	df=pd.read_json(j)
 	colors=df[color_val].unique()
@@ -84,12 +84,13 @@ def update_figure(group_mode,x_val,y_val,color_val,yr):
 		fig=go.Figure()
 		for color in colors:
 			df2=df.loc[df[color_val]==color]
-
 			if group_mode=='AVERAGE BY FACTOR':
 				df2=df2.groupby(x_val)[y_val].mean()
 				figtitle='Stacked averages of '+ md[y_val]['label'] +' for each ' + md[color_val]['label'];
 			elif group_mode=='SUM BY FACTOR':
+				print(df2)
 				df2=df2.groupby(x_val)[y_val].sum()
+				print(df2)
 				figtitle='Stacked totals of '+ md[y_val]['label'] +' for each ' + md[color_val]['label'];
 			x_vals=[i for i in df2.index]
 			y_vals=[df2[i] for i in x_vals]
@@ -124,5 +125,5 @@ def update_figure(group_mode,x_val,y_val,color_val,yr):
 		title="Voyages: %s-%s<br>%s" %(str(yr[0]),str(yr[1]),figtitle),
 		legend_title=md[color_val]['label']
 	)
-	
+	fig.write_html("scatter_nomem.html")	
 	return fig
