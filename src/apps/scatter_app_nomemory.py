@@ -55,7 +55,7 @@ layout = html.Div(children=[
         min=yr_range[0],
         max=yr_range[-1],
         step=1,
-        value=[1800,1810],
+        value=[1800,1810 ],
         marks={str(i*markerstep+yr_range[0]):str(i*markerstep+yr_range[0]) for i in range(int((yr_range[-1]-yr_range[0])/markerstep))}
     )
 ])
@@ -88,9 +88,9 @@ def update_figure(group_mode,x_val,y_val,color_val,yr):
 				df2=df2.groupby(x_val)[y_val].mean()
 				figtitle='Stacked averages of '+ md[y_val]['label'] +' for each ' + md[color_val]['label'];
 			elif group_mode=='SUM BY FACTOR':
-				print(df2)
+				#print(df2)
 				df2=df2.groupby(x_val)[y_val].sum()
-				print(df2)
+				#print(df2)
 				figtitle='Stacked totals of '+ md[y_val]['label'] +' for each ' + md[color_val]['label'];
 			x_vals=[i for i in df2.index]
 			y_vals=[df2[i] for i in x_vals]

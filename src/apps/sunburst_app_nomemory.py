@@ -25,21 +25,21 @@ layout = html.Div(children=[
     dcc.Dropdown(
     	id='broadregion',
         options=[{'label':md[i]['label'],'value':i} for i in geo_sunburst_broadregion_vars],
-        value='voyage_itinerary__imp_broad_region_voyage_begin',
+        value='voyage_itinerary__imp_broad_region_voyage_begin__broad_region',
         multi=False
     ),
         html.Label('Region'),
     dcc.Dropdown(
     	id='region',
         options=[{'label':md[i]['label'],'value':i} for i in geo_sunburst_region_vars],
-        value='voyage_itinerary__first_landing_region',
+        value='voyage_itinerary__first_landing_region__region',
         multi=False
     ),
         html.Label('Place'),
     dcc.Dropdown(
     	id='place',
         options= [{'label':md[i]['label'],'value':i} for i in geo_sunburst_place_vars],
-        value='voyage_itinerary__first_landing_place',
+        value='voyage_itinerary__first_landing_place__place',
         multi=False
     ),
 		html.Label('Numeric Values'),
@@ -54,7 +54,7 @@ layout = html.Div(children=[
         min=yr_range[0],
         max=yr_range[-1],
         step=1,
-        value=[1800,1850],
+        value=[1800,1810],
         marks={str(i*markerstep+yr_range[0]):str(i*markerstep+yr_range[0]) for i in range(int((yr_range[-1]-yr_range[0])/markerstep))}
     )
 ])
@@ -71,10 +71,14 @@ layout = html.Div(children=[
 	)
 def update_figure(broadregion,region,place,numeric_values,yr):
 	selected_fields=[broadregion,region,place,numeric_values]
-	r=requests.get('http://voyagesapi-django:8000/voyage/dataframes?&voyage_dates__imp_arrival_at_port_of_dis_year=%d,%d&selected_fields=%s' %(yr[0],yr[1],','.join(selected_fields)))
+	url='http://voyagesapi-django:8000/voyage/dataframes?&voyage_dates__imp_arrival_at_port_of_dis_year=%d,%d&selected_fields=%s' %(yr[0],yr[1],','.join(selected_fields))
+	#print(url)
+	r=requests.get(url)
 	j=r.text
 	df=pd.read_json(j)
-	df=df.fillna({i:"unknown" for i in geo_sunburst_broadregion_vars+geo_sunburst_region_vars+geo_sunburst_place_vars})
+	#print(df)
+	df=df.fillna({i:"unknown" for i in [place,region,broadregion]})
+	df=df.fillna({numeric_values:0})
 	figtitle="Voyages: %d-%d" %(yr[0],yr[1])+ ", "+md[numeric_values]['label'] +' by:<br>'+ md[broadregion]['label'] +'<br>' + md[region]['label'] + '<br>' + md[place]['label']
 	fig = px.sunburst(df,
 		path=[broadregion,region,place],

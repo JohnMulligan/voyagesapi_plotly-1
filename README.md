@@ -1,6 +1,6 @@
 # Voyages Plotly Visualizations
 
-A companion piece to https://github.com/JohnMulligan/voyagesapi
+A companion piece to https://github.com/rice-crc/voyagesapi_plotly
 
 Specifically, it hits the dataframe endpoint, which was built for this purpose.
 
@@ -18,9 +18,7 @@ host:~/Projects/voyagesapi_plotly$ docker-compose up
 
 Run specific apps by pointing at their paths, as given in app_router.py
 
-http://127.0.0.1:3000/apps/sunburst_app
 http://127.0.0.1:3000/apps/sunburst_app_nomemory
-http://127.0.0.1:3000/apps/scatter_app
 http://127.0.0.1:3000/apps/scatter_app_nomemory
 
 View container logs.
@@ -52,28 +50,11 @@ Each graph type (scatter, sunburst...) currently has its own variables defined i
 
 However, every dashboard also, on load, hits the options endpoint built into the new api. Right now I'm only using this to fetch human-readable variable labels, but it shows how we could offload some textual choices, maybe data validation, maybe even value selection array population, off to the main API.
 
-### Memory
+### no-memory targeted dataframe fetching
 
-There are two methods currently being used here:
+Dataframes do get large enough to really slow the show down, and this is especially true for text-heavy dataframes.
 
-#### in-memory dataframe fetching & faceting
-
-An advantage (_the advantage?_) of dataframes is that they have a lot of data in them that can be looked at this way and that. The disadvantage, of course .... :)
-
-One method we use, then, is to use the dash store component to first fetch a large dataframe and then make it available for faceting: https://dash.plotly.com/dash-core-components/store
-
-This means that the initial fetch (that is, API query) is pretty slow, but every non-query operation after that is very, very fast.
-
-Current apps that use this:
-
-1. scatter_app.py
-1. sunburst_app.py
-
-#### no-memory targeted dataframe fetching
-
-However, dataframes do get large enough to really slow the show down, and this is especially true for text-heavy dataframes.
-
-So, another method we're trying out here is only fetching the data we need to render the graph. The upside is that it really, really speeds up the queries in some cases. The downside is that every button you press, the graph goes out and fetches it all over again.
+So, I'm trying only fetching the data we need to render the graph. The upside is that it really, really speeds up the queries in some cases. The downside is that every button you press, the graph goes out and fetches it all over again.
 
 #### compromise positions down the line?
 
