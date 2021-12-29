@@ -6,10 +6,10 @@ scatter_plot_x_vars=[
 	'voyage_dates__imp_length_home_to_disembark']
 
 scatter_plot_y_vars=[
+	'voyage_slaves_numbers__imp_total_num_slaves_embarked',
 	'voyage_ship__tonnage_mod',
 	'voyage_crew__crew_voyage_outset',
 	'voyage_crew__crew_first_landing',
-	'voyage_slaves_numbers__imp_total_num_slaves_embarked',
 	'voyage_slaves_numbers__imp_total_num_slaves_disembarked',
 	'voyage_slaves_numbers__percentage_men',
 	'voyage_slaves_numbers__percentage_women',
@@ -24,6 +24,7 @@ scatter_plot_y_vars=[
 ]
 
 scatter_plot_factors = [
+	'voyage_itinerary__imp_port_voyage_begin__name',
 	'voyage_ship__imputed_nationality__label',
-	'voyage_itinerary__imp_port_voyage_begin__place',
+	'voyage_itinerary__principal_place_of_slave_purchase__name'
 ]
