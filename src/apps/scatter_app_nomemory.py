@@ -25,21 +25,21 @@ layout = html.Div(children=[
     dcc.Dropdown(
     	id='x_vars',
         options=[{'label':md[i]['label'],'value':i} for i in scatter_plot_x_vars],
-        value='voyage_dates__imp_arrival_at_port_of_dis_year',
+        value=scatter_plot_x_vars[0],
         multi=False
     ),
         html.Label('Y variables'),
     dcc.Dropdown(
     	id='y_vars',
         options=[{'label':md[i]['label'],'value':i} for i in scatter_plot_y_vars],
-        value='voyage_slaves_numbers__imp_total_num_slaves_embarked',
+        value=scatter_plot_y_vars[0],
         multi=False
     ),
         html.Label('Factors'),
     dcc.Dropdown(
     	id='factors',
         options= [{'label':md[i]['label'],'value':i} for i in scatter_plot_factors],
-        value='voyage_itinerary__imp_port_voyage_begin__place',
+        value=scatter_plot_factors[0],
         multi=False
     ),
     html.Label('AVERAGE, SUM // OR SHOW INDIVIDUAL DATAPOINTS'),
@@ -55,7 +55,7 @@ layout = html.Div(children=[
         min=yr_range[0],
         max=yr_range[-1],
         step=1,
-        value=[1800,1810 ],
+        value=[1800,1850],
         marks={str(i*markerstep+yr_range[0]):str(i*markerstep+yr_range[0]) for i in range(int((yr_range[-1]-yr_range[0])/markerstep))}
     )
 ])

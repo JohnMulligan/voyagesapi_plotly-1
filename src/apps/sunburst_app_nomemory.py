@@ -25,28 +25,28 @@ layout = html.Div(children=[
     dcc.Dropdown(
     	id='broadregion',
         options=[{'label':md[i]['label'],'value':i} for i in geo_sunburst_broadregion_vars],
-        value='voyage_itinerary__imp_broad_region_voyage_begin__broad_region',
+        value=geo_sunburst_broadregion_vars[0],
         multi=False
     ),
         html.Label('Region'),
     dcc.Dropdown(
     	id='region',
         options=[{'label':md[i]['label'],'value':i} for i in geo_sunburst_region_vars],
-        value='voyage_itinerary__first_landing_region__region',
+        value=geo_sunburst_region_vars[0],
         multi=False
     ),
         html.Label('Place'),
     dcc.Dropdown(
     	id='place',
         options= [{'label':md[i]['label'],'value':i} for i in geo_sunburst_place_vars],
-        value='voyage_itinerary__first_landing_place__place',
+        value=geo_sunburst_place_vars[0],
         multi=False
     ),
 		html.Label('Numeric Values'),
 	dcc.Dropdown(
     	id='numeric-values',
         options= [{'label':md[i]['label'],'value':i} for i in sunburst_plot_values],
-        value='voyage_slaves_numbers__imp_total_num_slaves_embarked',
+        value=sunburst_plot_values[0],
         multi=False
     ),
     dcc.RangeSlider(
@@ -72,7 +72,7 @@ layout = html.Div(children=[
 def update_figure(broadregion,region,place,numeric_values,yr):
 	selected_fields=[broadregion,region,place,numeric_values]
 	url='http://voyagesapi-django:8000/voyage/dataframes?&voyage_dates__imp_arrival_at_port_of_dis_year=%d,%d&selected_fields=%s' %(yr[0],yr[1],','.join(selected_fields))
-	#print(url)
+	print(url)
 	r=requests.get(url)
 	j=r.text
 	df=pd.read_json(j)
@@ -86,5 +86,5 @@ def update_figure(broadregion,region,place,numeric_values,yr):
 		height=800,
 	)
 	fig.update_layout(transition_duration=500,title=figtitle)
-	#fig.write_html("sunburst_nomem.html")
+	fig.write_html("sunburst_nomem.html")
 	return fig
