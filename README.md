@@ -18,8 +18,8 @@ host:~/Projects/voyagesapi_plotly$ docker-compose up
 
 Run specific apps by pointing at their paths, as given in app_router.py
 
-http://127.0.0.1:3000/apps/sunburst_app_nomemory
-http://127.0.0.1:3000/apps/scatter_app_nomemory
+* http://127.0.0.1:3000/apps/sunburst_app_nomemory
+* http://127.0.0.1:3000/apps/scatter_app_nomemory
 
 View container logs.
 
