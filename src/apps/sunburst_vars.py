@@ -25,7 +25,6 @@ geo_sunburst_place_vars = [
 'voyage_itinerary__first_landing_place__place',
 'voyage_itinerary__first_place_slave_purchase__place',
 'voyage_itinerary__imp_principal_place_of_slave_purchase__place',
-'voyage_itinerary__int_second_place_region_slave_landing__place',
 'voyage_itinerary__principal_place_of_slave_purchase__place',
 'voyage_itinerary__second_landing_place__place',
 'voyage_itinerary__second_place_slave_purchase__place',
