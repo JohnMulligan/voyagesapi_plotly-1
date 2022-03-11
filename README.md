@@ -1,6 +1,6 @@
 # Voyages Plotly Visualizations
 
-A companion piece to https://github.com/rice-crc/voyagesapi_plotly
+A companion piece to https://github.com/rice-crc/voyages-api
 
 Specifically, it hits the dataframe endpoint, which was built for this purpose.
 
