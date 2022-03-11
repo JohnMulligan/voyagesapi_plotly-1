@@ -1,7 +1,7 @@
 #formerly graphs.py
 
 scatter_plot_x_vars=[
-	'voyage_dates__imp_arrival_at_port_of_dis_year',
+	'voyage_dates__imp_arrival_at_port_of_dis_yyyy',
 	'voyage_dates__length_middle_passage_days',
 	'voyage_dates__imp_length_home_to_disembark']
 
@@ -25,6 +25,6 @@ scatter_plot_y_vars=[
 
 scatter_plot_factors = [
 	'voyage_itinerary__imp_port_voyage_begin__place',
-	'voyage_ship__imputed_nationality__label',
+	'voyage_ship__imputed_nationality__name',
 	'voyage_itinerary__principal_place_of_slave_purchase__place'
 ]

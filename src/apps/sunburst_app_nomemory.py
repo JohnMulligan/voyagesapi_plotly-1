@@ -1,7 +1,4 @@
-import dash
-import dash_core_components as dcc
-import dash_html_components as html
-from dash.dependencies import Input, Output
+from dash import Dash, dcc, html, Input, Output, callback, dash_table
 import plotly.express as px
 import plotly.graph_objects as go
 import pandas as pd
@@ -10,7 +7,7 @@ import json
 from apps.sunburst_vars import *
 from app import app
 
-r=requests.options('http://voyagesapi-django:8000/voyage/')
+r=requests.options('http://152.70.193.224:8000/voyage/?hierarchical=False')
 md=json.loads(r.text)
 
 yr_range=range(1514,1866)
@@ -71,7 +68,7 @@ layout = html.Div(children=[
 	)
 def update_figure(broadregion,region,place,numeric_values,yr):
 	selected_fields=[broadregion,region,place,numeric_values]
-	url='http://voyagesapi-django:8000/voyage/dataframes?&voyage_dates__imp_arrival_at_port_of_dis_year=%d,%d&selected_fields=%s' %(yr[0],yr[1],','.join(selected_fields))
+	url='http://152.70.193.224:8000/voyage/dataframes?hierarchical=False&voyage_dates__imp_arrival_at_port_of_dis_yyyy=%d,%d&selected_fields=%s' %(yr[0],yr[1],','.join(selected_fields))
 	print(url)
 	r=requests.get(url)
 	j=r.text
