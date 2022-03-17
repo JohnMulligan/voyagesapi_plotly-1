@@ -6,8 +6,10 @@ import requests
 import json
 from apps.scatter_vars import *
 from app import app
+from auth_settings import *
+from authenticate import *
 
-r=requests.options('http://152.70.193.224:8000/voyage/?hierarchical=False')
+r=requests.options(base_url+'voyage/?hierarchical=False',headers=headers)
 md=json.loads(r.text)
 
 yr_range=range(1514,1866)
@@ -72,9 +74,9 @@ layout = html.Div(children=[
 
 def update_figure(group_mode,x_val,y_val,color_val,yr):
 	selected_fields=[x_val,y_val,color_val]
-	url='http://152.70.193.224:8000/voyage/dataframes?hierarchical=False^=&voyage_dates__imp_arrival_at_port_of_dis_yyyy=%d,%d&selected_fields=%s' %(yr[0],yr[1],','.join(selected_fields))
+	url=base_url+'voyage/dataframes?hierarchical=False&voyage_dates__imp_arrival_at_port_of_dis_yyyy=%d,%d&selected_fields=%s' %(yr[0],yr[1],','.join(selected_fields))
 	print(url)
-	r=requests.get(url)
+	r=requests.get(url,headers=headers)
 	j=r.text
 	df=pd.read_json(j)
 	colors=df[color_val].unique()

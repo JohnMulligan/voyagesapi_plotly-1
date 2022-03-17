@@ -6,6 +6,8 @@ Specifically, it hits the dataframe endpoint, which was built for this purpose.
 
 This repository contains several interactive visualizations of the Voyages dataset, rendered in Python Dash: https://dash.plotly.com/deployment
 
+Now authenticates.
+
 ## Local Deployment
 
 Be sure you have a local deployment of the Voyages API running at http://127.0.0.1:8000/.
