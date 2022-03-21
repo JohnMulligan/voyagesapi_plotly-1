@@ -9,57 +9,58 @@ from app import app
 from auth_settings import *
 from authenticate import *
 
-r=requests.options(base_url+'voyage/?hierarchical=False',headers=headers)
-md=json.loads(r.text)
+if auth_headers==None:
+	layout = html.H3("Error authenticating with voyges api server. Check auth_settings.py")
+else:
+	r=requests.options(base_url+'voyage/?hierarchical=False',headers=auth_headers)
+	md=json.loads(r.text)
 
-yr_range=range(1514,1866)
-markerstep=20
+	yr_range=range(1514,1866)
+	markerstep=20
 
-
-
-layout = html.Div(children=[
-	html.H3("NO MEMORY SCATTER APP -- DOWNLOADS SMALL CHUNK OF DATA FASTER BUT HAS TO RELOAD EVERY TIME YOU PRESS A BUTTON."),
-    dcc.Graph(
-        id='voyages-scatter-graph-nomemory'
-    ),
-    html.Label('X variables'),
-    dcc.Dropdown(
-    	id='x_vars',
-        options=[{'label':md[i]['label'],'value':i} for i in scatter_plot_x_vars],
-        value=scatter_plot_x_vars[0],
-        multi=False
-    ),
-        html.Label('Y variables'),
-    dcc.Dropdown(
-    	id='y_vars',
-        options=[{'label':md[i]['label'],'value':i} for i in scatter_plot_y_vars],
-        value=scatter_plot_y_vars[0],
-        multi=False
-    ),
-        html.Label('Factors'),
-    dcc.Dropdown(
-    	id='factors',
-        options= [{'label':md[i]['label'],'value':i} for i in scatter_plot_factors],
-        value=scatter_plot_factors[0],
-        multi=False
-    ),
-    html.Label('AVERAGE, SUM // OR SHOW INDIVIDUAL DATAPOINTS'),
-    dcc.RadioItems(
-                id='group_mode',
-                options=[{'label': i, 'value': i} for i in ['AVERAGE BY FACTOR', 'SUM BY FACTOR','INDIVIDUAL DATAPOINTS']],
-                value='SUM BY FACTOR',
-                labelStyle={'display': 'inline-block'}
-            ),
-    	html.Label('Years'),
-    dcc.RangeSlider(
-        id='year-slider',
-        min=yr_range[0],
-        max=yr_range[-1],
-        step=1,
-        value=[1800,1850],
-        marks={str(i*markerstep+yr_range[0]):str(i*markerstep+yr_range[0]) for i in range(int((yr_range[-1]-yr_range[0])/markerstep))}
-    )
-])
+	layout = html.Div(children=[
+		html.H3("NO MEMORY SCATTER APP -- DOWNLOADS SMALL CHUNK OF DATA FASTER BUT HAS TO RELOAD EVERY TIME YOU PRESS A BUTTON."),
+		dcc.Graph(
+			id='voyages-scatter-graph-nomemory'
+		),
+		html.Label('X variables'),
+		dcc.Dropdown(
+			id='x_vars',
+			options=[{'label':md[i]['label'],'value':i} for i in scatter_plot_x_vars],
+			value=scatter_plot_x_vars[0],
+			multi=False
+		),
+			html.Label('Y variables'),
+		dcc.Dropdown(
+			id='y_vars',
+			options=[{'label':md[i]['label'],'value':i} for i in scatter_plot_y_vars],
+			value=scatter_plot_y_vars[0],
+			multi=False
+		),
+			html.Label('Factors'),
+		dcc.Dropdown(
+			id='factors',
+			options= [{'label':md[i]['label'],'value':i} for i in scatter_plot_factors],
+			value=scatter_plot_factors[0],
+			multi=False
+		),
+		html.Label('AVERAGE, SUM // OR SHOW INDIVIDUAL DATAPOINTS'),
+		dcc.RadioItems(
+					id='group_mode',
+					options=[{'label': i, 'value': i} for i in ['AVERAGE BY FACTOR', 'SUM BY FACTOR','INDIVIDUAL DATAPOINTS']],
+					value='SUM BY FACTOR',
+					labelStyle={'display': 'inline-block'}
+				),
+			html.Label('Years'),
+		dcc.RangeSlider(
+			id='year-slider',
+			min=yr_range[0],
+			max=yr_range[-1],
+			step=1,
+			value=[1800,1850],
+			marks={str(i*markerstep+yr_range[0]):str(i*markerstep+yr_range[0]) for i in range(int((yr_range[-1]-yr_range[0])/markerstep))}
+		)
+	])
 
 
 
@@ -76,7 +77,7 @@ def update_figure(group_mode,x_val,y_val,color_val,yr):
 	selected_fields=[x_val,y_val,color_val]
 	url=base_url+'voyage/dataframes?hierarchical=False&voyage_dates__imp_arrival_at_port_of_dis_yyyy=%d,%d&selected_fields=%s' %(yr[0],yr[1],','.join(selected_fields))
 	print(url)
-	r=requests.get(url,headers=headers)
+	r=requests.get(url,headers=auth_headers)
 	j=r.text
 	df=pd.read_json(j)
 	colors=df[color_val].unique()

@@ -6,7 +6,11 @@ Specifically, it hits the dataframe endpoint, which was built for this purpose.
 
 This repository contains several interactive visualizations of the Voyages dataset, rendered in Python Dash: https://dash.plotly.com/deployment
 
-Now authenticates.
+## Authentication
+
+This app now authenticates per the workflow instructions here: https://github.com/rice-crc/voyages-api#authentication-workflow
+
+Authentication credentials and server address are set in auth_settings.py
 
 ## Local Deployment
 

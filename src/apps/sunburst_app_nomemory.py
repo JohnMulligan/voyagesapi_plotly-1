@@ -9,54 +9,57 @@ from apps.sunburst_vars import *
 from auth_settings import *
 from authenticate import *
 
-r=requests.options(base_url+'voyage/?hierarchical=False',headers=headers)
-md=json.loads(r.text)
+if auth_headers==None:
+	layout = html.H3("Error authenticating with voyges api server. Check auth_settings.py")
+else:
+	r=requests.options(base_url+'voyage/?hierarchical=False',headers=auth_headers)
+	md=json.loads(r.text)
 
-yr_range=range(1514,1866)
-markerstep=20
+	yr_range=range(1514,1866)
+	markerstep=20
 
-layout = html.Div(children=[
-	html.H3("NO MEMORY SUNBURST APP -- DOWNLOADS SMALL DATAFRAME BUT HAS TO RELOAD EVERY TIME YOU PRESS A BUTTON -- STILL PREFERABLE IN THIS CASE"),
-    dcc.Graph(
-        id='voyages-sunburst-graph-nomemory'
-    ),
-    html.Label('Broad Region'),
-    dcc.Dropdown(
-    	id='broadregion',
-        options=[{'label':md[i]['label'],'value':i} for i in geo_sunburst_broadregion_vars],
-        value=geo_sunburst_broadregion_vars[0],
-        multi=False
-    ),
-        html.Label('Region'),
-    dcc.Dropdown(
-    	id='region',
-        options=[{'label':md[i]['label'],'value':i} for i in geo_sunburst_region_vars],
-        value=geo_sunburst_region_vars[0],
-        multi=False
-    ),
-        html.Label('Place'),
-    dcc.Dropdown(
-    	id='place',
-        options= [{'label':md[i]['label'],'value':i} for i in geo_sunburst_place_vars],
-        value=geo_sunburst_place_vars[0],
-        multi=False
-    ),
-		html.Label('Numeric Values'),
-	dcc.Dropdown(
-    	id='numeric-values',
-        options= [{'label':md[i]['label'],'value':i} for i in sunburst_plot_values],
-        value=sunburst_plot_values[0],
-        multi=False
-    ),
-    dcc.RangeSlider(
-        id='year-slider',
-        min=yr_range[0],
-        max=yr_range[-1],
-        step=1,
-        value=[1800,1810],
-        marks={str(i*markerstep+yr_range[0]):str(i*markerstep+yr_range[0]) for i in range(int((yr_range[-1]-yr_range[0])/markerstep))}
-    )
-])
+	layout = html.Div(children=[
+		html.H3("NO MEMORY SUNBURST APP -- DOWNLOADS SMALL DATAFRAME BUT HAS TO RELOAD EVERY TIME YOU PRESS A BUTTON -- STILL PREFERABLE IN THIS CASE"),
+		dcc.Graph(
+			id='voyages-sunburst-graph-nomemory'
+		),
+		html.Label('Broad Region'),
+		dcc.Dropdown(
+			id='broadregion',
+			options=[{'label':md[i]['label'],'value':i} for i in geo_sunburst_broadregion_vars],
+			value=geo_sunburst_broadregion_vars[0],
+			multi=False
+		),
+			html.Label('Region'),
+		dcc.Dropdown(
+			id='region',
+			options=[{'label':md[i]['label'],'value':i} for i in geo_sunburst_region_vars],
+			value=geo_sunburst_region_vars[0],
+			multi=False
+		),
+			html.Label('Place'),
+		dcc.Dropdown(
+			id='place',
+			options= [{'label':md[i]['label'],'value':i} for i in geo_sunburst_place_vars],
+			value=geo_sunburst_place_vars[0],
+			multi=False
+		),
+			html.Label('Numeric Values'),
+		dcc.Dropdown(
+			id='numeric-values',
+			options= [{'label':md[i]['label'],'value':i} for i in sunburst_plot_values],
+			value=sunburst_plot_values[0],
+			multi=False
+		),
+		dcc.RangeSlider(
+			id='year-slider',
+			min=yr_range[0],
+			max=yr_range[-1],
+			step=1,
+			value=[1800,1810],
+			marks={str(i*markerstep+yr_range[0]):str(i*markerstep+yr_range[0]) for i in range(int((yr_range[-1]-yr_range[0])/markerstep))}
+		)
+	])
 
 
 
@@ -71,7 +74,7 @@ layout = html.Div(children=[
 def update_figure(broadregion,region,place,numeric_values,yr):
 	selected_fields=[broadregion,region,place,numeric_values]
 	url=base_url+'voyage/dataframes?hierarchical=False&voyage_dates__imp_arrival_at_port_of_dis_yyyy=%d,%d&selected_fields=%s' %(yr[0],yr[1],','.join(selected_fields))
-	r=requests.get(url,headers=headers)
+	r=requests.get(url,headers=auth_headers)
 	j=r.text
 	df=pd.read_json(j)
 	#print(df)
